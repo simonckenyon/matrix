@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, flash
 import flask_login
-import subprocess
 from user import User
+import process
 
 
 app = Flask(__name__)
@@ -44,20 +44,16 @@ def index():
 @app.route("/start")
 @flask_login.login_required
 def start():
-    global __MESSAGE__
-    global __LIGHTS_SUBPROCESS__
+    process.start()
     flash('Lights started')
-    #__LIGHTS_SUBPROCESS__ = subprocess.Popen(["/usr/local/bin/lights", __MESSAGE__])
-    __LIGHTS_SUBPROCESS__ = subprocess.Popen(["top"])
     return render_template('main.html')
 
 
 @app.route("/stop")
 @flask_login.login_required
 def stop():
-    global __LIGHTS_SUBPROCESS__
+    process.stop()
     flash('Lights stopped')
-    __LIGHTS_SUBPROCESS__.terminate()
     return render_template('main.html')
 
 
@@ -102,9 +98,9 @@ def page_not_found(error):
 @app.route("/message", methods=['POST'])
 @flask_login.login_required
 def message():
-    global __MESSAGE__
-    __MESSAGE__ = request.form['chosen']
-    flash('Message set to ' + __MESSAGE__)
+    msg = request.form['chosen']
+    process.message(msg)
+    flash('Message set to ' + msg)
     return render_template('main.html')
 
 

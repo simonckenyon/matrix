@@ -7,9 +7,10 @@ def start():
     global msg
     global p
 
-    if (p is None):
+    if (p is not None):
         stop()
     p = subprocess.Popen(["/usr/local/bin/lights", msg])
+    #p = subprocess.Popen(["top"])
     return
 
 

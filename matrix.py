@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, flash
 import flask_login
 from user import User
-import process
+import display
 
 
 app = Flask(__name__)
@@ -9,6 +9,8 @@ app.secret_key = 'a really secret key'
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'simon@koala.ie': {'pw': 'give me a break'}}
+display = display.Display()
+display.start()
 
 
 @login_manager.user_loader
@@ -44,7 +46,8 @@ def index():
 @app.route("/start")
 @flask_login.login_required
 def start():
-    process.start()
+    global message
+    display.onThread(display.start(message))
     flash('Lights started')
     return render_template('main.html')
 
@@ -52,7 +55,7 @@ def start():
 @app.route("/stop")
 @flask_login.login_required
 def stop():
-    process.stop()
+    display.onThread(display.stop())
     flash('Lights stopped')
     return render_template('main.html')
 
@@ -98,9 +101,9 @@ def page_not_found(error):
 @app.route("/message", methods=['POST'])
 @flask_login.login_required
 def message():
-    msg = request.form['chosen']
-    process.message(msg)
-    flash('Message set to ' + msg)
+    global message
+    message = request.form['chosen']
+    flash('Message set to ' + message)
     return render_template('main.html')
 
 

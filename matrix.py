@@ -14,6 +14,7 @@ app.secret_key = 'a really secret key'
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'simon@koala.ie': {'pw': 'give me a break'}}
+t = None
 
 
 @login_manager.user_loader
@@ -56,8 +57,9 @@ def displayThread():
 
 def stopDisplay():
     global t
-    leds.stopDisplay()
-    t.join()
+    if t is not None:
+        leds.stopDisplay()
+        t.join()
     return
 
 

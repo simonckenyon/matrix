@@ -38,7 +38,7 @@ def request_loader(request):
     return user
 
 
-def startDisplay():
+def startMatrix():
     global t
     t = threading.Thread(target=displayThread)
     t.start()
@@ -55,7 +55,7 @@ def displayThread():
     return
 
 
-def stopDisplay():
+def stopMatrix():
     global t
     global led
     if t is not None:
@@ -75,7 +75,7 @@ def index():
 @app.route("/start")
 @flask_login.login_required
 def start():
-    startDisplay()
+    startMatrix()
     flash('Lights started')
     return render_template('main.html', message=message)
 
@@ -83,7 +83,7 @@ def start():
 @app.route("/stop")
 @flask_login.login_required
 def stop():
-    stopDisplay()
+    stopMatrix()
     flash('Lights stopped')
     return render_template('main.html', message=message)
 
@@ -136,8 +136,8 @@ def page_not_found(error):
 def message():
     global message
     message = request.form['chosen']
-    stopDisplay()
-    startDisplay()
+    stopMatrix()
+    startMatrix()
     flash('Message set to ' + message)
     return render_template('main.html', message=message)
 

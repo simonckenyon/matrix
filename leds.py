@@ -54,7 +54,7 @@ class LED:
         # Intialize the library (must be called once before other functions).
         strip.begin()
         # Wake up the LEDs by briefly setting them all to white
-        LED.allonecolour(strip, LED.colour(255, 255, 255))
+        self.allonecolour(strip, self.colour(255, 255, 255))
         time.sleep(0.01)
 
 
@@ -122,7 +122,7 @@ class LED:
 
         # Create NeoPixel object with appropriate configuration.
         strip = Adafruit_NeoPixel(LED.LED_COUNT, LED.LED_PIN, LED.LED_FREQ_HZ, LED.LED_DMA, LED.LED_INVERT, LED.LED_BRIGHTNESS)
-        LED.initLeds(strip)
+        self.initLeds(strip)
 
         # And here we go.
         try:
@@ -150,7 +150,7 @@ class LED:
                     dots = list(rg.getdata())
 
                     for i in range(len(dots)):
-                        strip.setPixelColor(LED.ledMatrix[i], LED.colourTuple(dots[i]))
+                        strip.setPixelColor(LED.ledMatrix[i], self.colourTuple(dots[i]))
                     strip.show()
 
                     # Check for instructions from the text file
@@ -191,11 +191,11 @@ class LED:
 
                     x = x + thisincrement
                     time.sleep(thissleep)
-            LED.allonecolour(strip, LED.colour(0, 0, 0))
+            self.allonecolour(strip, self.colour(0, 0, 0))
 
         except (KeyboardInterrupt, SystemExit):
             #print "Stopped"
-            LED.allonecolour(strip, LED.colour(0, 0, 0))
+            self.allonecolour(strip, self.colour(0, 0, 0))
 
 
     def stopDisplay(self):

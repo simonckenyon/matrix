@@ -15,6 +15,7 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'simon@koala.ie': {'pw': 'give me a break'}}
 t = None
+message='new-christmas'
 
 
 @login_manager.user_loader
@@ -66,7 +67,8 @@ def stopDisplay():
 @app.route("/")
 def index():
     if 'logged_in' in session:
-        return render_template('main.html')
+        data = {message: message}
+        return render_template('main.html', **data)
     else:
         return render_template('welcome.html')
 

@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, session, flash
 import flask_login
 import os
-import time
 from user import User
 import threading
 import leds
@@ -15,6 +14,7 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'simon@koala.ie': {'pw': 'give me a break'}}
 t = None
+message = None
 
 
 @login_manager.user_loader

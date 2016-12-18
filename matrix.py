@@ -135,6 +135,4 @@ def message():
 
 
 if __name__ == "__main__":
-    message = 'new-christmas'
-    startDisplay()
     app.run(host='0.0.0.0', port=9090, debug=True)

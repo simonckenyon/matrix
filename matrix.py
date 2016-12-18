@@ -3,7 +3,7 @@ import flask_login
 import os
 from user import User
 import threading
-import leds
+from leds import LED
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
 APP_STATIC = os.path.join(APP_ROOT, 'static')
@@ -47,17 +47,19 @@ def startDisplay():
 
 def displayThread():
     global message
+    global led
     print 'here is the message ' + message
     s = os.path.join(APP_STATIC, message) + '.png'
     print 's=' + s
-    leds.startDisplay(s)
+    led.startDisplay(s)
     return
 
 
 def stopDisplay():
     global t
+    global led
     if t is not None:
-        leds.stopDisplay()
+        led.stopDisplay()
         t.join()
     return
 
@@ -142,4 +144,5 @@ def message():
 
 if __name__ == "__main__":
     message = 'new-christmas'
+    led = LED()
     app.run(host='0.0.0.0', port=9090, debug=True)

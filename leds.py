@@ -28,7 +28,7 @@ def initLeds(strip):
     time.sleep(0.01)
 
 
-def displayImage(image):
+def startDisplay(image):
     global keep_on_going
 
     keep_on_going = True
@@ -154,7 +154,7 @@ def displayImage(image):
             # Initialise a pointer for the current line in the text file
             tx = 0
 
-            while x < im.size[0] - MATRIX_WIDTH:
+            while (x < im.size[0] - MATRIX_WIDTH) and keep_on_going:
 
                 # Set the sleep period for this frame
                 # This might get changed by a textfile command

@@ -50,10 +50,12 @@
                 <a class="navbar-brand" href="/">Lights</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="/start">Start</a></li>
-                    <li><a href="/stop">Stop</a></li>
-                </ul>
+                {% if session.logged_in %}
+                    <ul class="nav navbar-nav">
+                        <li><a href="/start">Start</a></li>
+                        <li><a href="/stop">Stop</a></li>
+                    </ul>
+                {% endif %}
                 <ul class="nav navbar-nav navbar-right">
                     {% if not session.logged_in %}
                         <form id="signin" class="navbar-form navbar-right" role="form" action='login' method='POST'>

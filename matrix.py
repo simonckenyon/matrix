@@ -37,9 +37,24 @@ def request_loader(request):
     return user
 
 
-def startYourEngines(message):
+def startDisplay():
+    global t
+    t = threading.Thread(target=displayThread)
+    t.start()
+    return
+
+
+def displayThread():
     print 'here is the message ' + message
-    leds.displayImage(message)
+    global message
+    s = os.path.join(APP_STATIC, message) + '.png'
+    print 's=' + s
+    leds.startDisplay(s)
+    return
+
+
+def stopDisplay():
+    leds.stopDisplay()
     return
 
 
@@ -54,12 +69,7 @@ def index():
 @app.route("/start")
 @flask_login.login_required
 def start():
-    global t
-    global message
-    s = os.path.join(APP_STATIC, message) + '.png'
-    print 's=' + s
-    t = threading.Thread(target=startYourEngines, args=(s,))
-    t.start()
+    startDisplay()
     flash('Lights started')
     return render_template('main.html')
 
@@ -67,7 +77,7 @@ def start():
 @app.route("/stop")
 @flask_login.login_required
 def stop():
-    leds.stopDisplay()
+    stopDisplay()
     flash('Lights stopped')
     return render_template('main.html')
 
@@ -115,6 +125,8 @@ def page_not_found(error):
 def message():
     global message
     message = request.form['chosen']
+    stopDisplay()
+    startDisplay()
     flash('Message set to ' + message)
     return render_template('main.html')
 

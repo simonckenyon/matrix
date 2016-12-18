@@ -45,8 +45,8 @@ def startDisplay():
 
 
 def displayThread():
-    print 'here is the message ' + message
     global message
+    print 'here is the message ' + message
     s = os.path.join(APP_STATIC, message) + '.png'
     print 's=' + s
     leds.startDisplay(s)
@@ -133,3 +133,5 @@ def message():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=9090, debug=True)
+    message = 'new-christmas'
+    startDisplay()

@@ -14,7 +14,6 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'simon@koala.ie': {'pw': 'give me a break'}}
 t = None
-message = None
 
 
 @login_manager.user_loader
@@ -142,7 +141,6 @@ def message():
 
 
 if __name__ == "__main__":
-    global message
     message = 'new-christmas'
     startDisplay()
     app.run(host='0.0.0.0', port=9090, debug=True)

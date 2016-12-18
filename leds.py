@@ -139,7 +139,7 @@ class LED:
 
                     # Set the sleep period for this frame
                     # This might get changed by a textfile command
-                    thissleep = SPEED
+                    thissleep = LED.SPEED
 
                     # Set the increment for this frame
                     # Typically advance 1 pixel at a time but
@@ -167,8 +167,8 @@ class LED:
                                 fi = int(match.group('finish'))
                             if x >= st and tx <= fi:
                                 if match.group('command').lower() == 'speed':
-                                    SPEED = float(match.group('param'))
-                                    thissleep = SPEED
+                                    LED.SPEED = float(match.group('param'))
+                                    thissleep = LED.SPEED
                                     #print "Position %d : Set speed to %.3f secs per frame" % (x, thissleep)
                                 elif match.group('command').lower() == 'flip':
                                     thissleep = float(match.group('param'))

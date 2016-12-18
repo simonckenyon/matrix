@@ -77,7 +77,7 @@ def index():
 def start():
     startDisplay()
     flash('Lights started')
-    return render_template('main.html')
+    return render_template('main.html', message=message)
 
 
 @app.route("/stop")
@@ -85,7 +85,7 @@ def start():
 def stop():
     stopDisplay()
     flash('Lights stopped')
-    return render_template('main.html')
+    return render_template('main.html', message=message)
 
 
 @app.route('/login', methods=['POST'])
@@ -100,7 +100,7 @@ def login():
             user.id = email
             flask_login.login_user(user)
             session['logged_in'] = True
-            return render_template('main.html')
+            return render_template('main.html', message=message)
     except KeyError as e:
         flash('Invalid email')
         return render_template('welcome.html')

@@ -1,16 +1,18 @@
 from flask import Flask, render_template, request, session, flash
 import flask_login
+import os
 from user import User
-import display
+import threading
+import leds
 
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
+APP_STATIC = os.path.join(APP_ROOT, 'static')
 
 app = Flask(__name__)
 app.secret_key = 'a really secret key'
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'simon@koala.ie': {'pw': 'give me a break'}}
-display = display.Display()
-display.start()
 
 
 @login_manager.user_loader
@@ -35,6 +37,12 @@ def request_loader(request):
     return user
 
 
+def startYourEngines(message):
+    print 'here is the message ' + message
+    leds.displayImage(message)
+    return
+
+
 @app.route("/")
 def index():
     if 'logged_in' in session:
@@ -46,8 +54,12 @@ def index():
 @app.route("/start")
 @flask_login.login_required
 def start():
+    global t
     global message
-    display.onThread(display.start(message))
+    s = os.path.join(APP_STATIC, message) + '.png'
+    print 's=' + s
+    t = threading.Thread(target=startYourEngines, args=(s,))
+    t.start()
     flash('Lights started')
     return render_template('main.html')
 
@@ -55,7 +67,7 @@ def start():
 @app.route("/stop")
 @flask_login.login_required
 def stop():
-    display.onThread(display.stop())
+    leds.stopDisplay()
     flash('Lights stopped')
     return render_template('main.html')
 

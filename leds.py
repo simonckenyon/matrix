@@ -2,55 +2,6 @@ import time, sys, os, re
 from neopixel import *  # See https://learn.adafruit.com/neopixels-on-raspberry-pi/software
 from PIL import Image  # Use apt-get install python-imaging to install this
 
-# LED strip configuration:
-LED_COUNT = 96  # Number of LED pixels.
-LED_PIN = 18  # GPIO pin connected to the pixels (must support PWM!).
-LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA = 5  # DMA channel to use for generating signal (try 5)
-LED_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
-LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
-
-# Speed of movement, in seconds (recommend 0.1-0.3)
-SPEED = 0.075
-
-# Size of your matrix
-MATRIX_WIDTH = 12
-MATRIX_HEIGHT = 8
-
-# LED matrix layout
-# A list converting LED string number to physical grid layout
-# Start with top right and continue right then down
-# For example, my string starts bottom right and has horizontal batons
-# which loop on alternate rows.
-#
-# Mine ends at the top right here:     -----------\
-# My last LED is number 95                        |
-#                                      /----------/
-#                                      |
-#                                      \----------\
-# The first LED is number 0                       |
-# Mine starts at the bottom left here: -----------/
-
-myMatrix = [95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84,
-            72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
-            71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60,
-            48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-            47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36,
-            24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
-            23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-
-# Feel free to write a fancy set of loops to populate myMatrix
-# if you have a really big display! I used two cheap strings of
-# 50 LEDs, so I just have a 12x8 grid = 96 LEDs
-# I got mine from: http://www.amazon.co.uk/gp/product/B00MXW054Y
-# I also used an 74AHCT125 level shifter & 10 amp 5V PSU
-# Good build tutorial here:
-# https://learn.adafruit.com/neopixels-on-raspberry-pi?view=all
-
-# Check that we have sensible width & height
-if MATRIX_WIDTH * MATRIX_HEIGHT != len(myMatrix):
-    raise Exception("Matrix width x height does not equal length of myMatrix")
 
 
 def allonecolour(strip, colour):
@@ -82,14 +33,61 @@ def displayImage(image):
 
     keep_on_going = True
 
+    # LED strip configuration:
+    LED_COUNT = 160  # Number of LED pixels.
+    LED_PIN = 18  # GPIO pin connected to the pixels (must support PWM!).
+    LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
+    LED_DMA = 5  # DMA channel to use for generating signal (try 5)
+    LED_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
+    LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
+    
+    # Speed of movement, in seconds (recommend 0.1-0.3)
+    SPEED = 0.075
+    
+    # Size of your matrix
+    MATRIX_WIDTH = 20
+    MATRIX_HEIGHT = 8
+    
+    # LED matrix layout
+    # A list converting LED string number to physical grid layout
+    # Start with top right and continue right then down
+    # For example, my string starts bottom right and has horizontal batons
+    # which loop on alternate rows.
+    #
+    # Mine ends at the top right here:     -----------\
+    # My last LED is number 95                        |
+    #                                      /----------/
+    #                                      |
+    #                                      \----------\
+    # The first LED is number 0                       |
+    # Mine starts at the bottom left here: -----------/
+    
+    myMatrix=[ 7, 8,23,24,39,40,55,56,71,72,87,88,103,104,119,120,135,136,151,152,
+               6, 9,22,25,38,41,54,57,70,73,86,89,102,105,118,121,134,137,150,153,
+               5,10,21,26,37,42,53,58,69,74,85,90,101,106,117,122,133,138,149,154,
+               4,11,20,27,36,43,52,59,68,75,84,91,100,107,116,123,132,139,148,155,
+               3,12,19,28,35,44,51,60,67,76,83,92,99,108,115,124,131,140,147,156,
+               2,13,18,29,34,45,50,61,66,77,82,93,98,109,114,125,130,141,146,157,
+               1,14,17,30,33,46,49,62,65,78,81,94,97,110,113,126,129,142,145,158,
+               0,15,16,31,32,47,48,63,64,79,80,95,96,111,112,127,128,143,144,159]
+    
+    # Feel free to write a fancy set of loops to populate myMatrix
+    # if you have a really big display! I used two cheap strings of
+    # 50 LEDs, so I just have a 12x8 grid = 96 LEDs
+    # I got mine from: http://www.amazon.co.uk/gp/product/B00MXW054Y
+    # I also used an 74AHCT125 level shifter & 10 amp 5V PSU
+    # Good build tutorial here:
+    # https://learn.adafruit.com/neopixels-on-raspberry-pi?view=all
+    
+    # Check that we have sensible width & height
+    if MATRIX_WIDTH * MATRIX_HEIGHT != len(myMatrix):
+        raise Exception("Matrix width x height does not equal length of myMatrix")
+
     # Open the image file
     try:
-        loadIm = Image.open(sys.argv[1])
+        loadIm = Image.open(image)
     except:
-        if len(sys.argv) == 0:
-            raise Exception("Please provide an image filename as a parameter.")
-        else:
-            raise Exception("Image file %s could not be loaded" % sys.argv[1])
+        raise Exception("Image file %s could not be loaded" % image)
 
     # If the image height doesn't match the matrix, resize it
     if loadIm.size[1] != MATRIX_HEIGHT:
@@ -125,7 +123,7 @@ def displayImage(image):
     #   At position 1, jump to position 200
     #   Useful for debugging only - the image will loop anyway
     txtlines = []
-    match = re.search(r'^(?P<base>.*)\.[^\.]+$', sys.argv[1], re.M | re.I)
+    match = re.search(r'^(?P<base>.*)\.[^\.]+$', image, re.M | re.I)
     if match:
         txtfile = match.group('base') + '.txt'
         if os.path.isfile(txtfile):
@@ -212,13 +210,14 @@ def displayImage(image):
 
                 x = x + thisincrement
                 time.sleep(thissleep)
+        allonecolour(strip, colour(0, 0, 0))
 
     except (KeyboardInterrupt, SystemExit):
         print "Stopped"
         allonecolour(strip, colour(0, 0, 0))
 
 
-def stopDisplay(image):
+def stopDisplay():
     global keep_on_going
 
     keep_on_going = False

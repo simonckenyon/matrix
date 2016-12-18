@@ -67,8 +67,7 @@ def stopDisplay():
 @app.route("/")
 def index():
     if 'logged_in' in session:
-        data = {message: message}
-        return render_template('main.html', **data)
+        return render_template('main.html', message=message)
     else:
         return render_template('welcome.html')
 
@@ -135,7 +134,7 @@ def message():
     stopDisplay()
     startDisplay()
     flash('Message set to ' + message)
-    return render_template('main.html')
+    return render_template('main.html', message=message)
 
 
 if __name__ == "__main__":

@@ -116,6 +116,11 @@ def logout():
     return render_template('welcome.html')
 
 
+@app.route("/support", methods=['GET'])
+def support():
+    return render_template('support.html')
+
+
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return 'Unauthorized'

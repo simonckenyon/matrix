@@ -55,8 +55,9 @@ def displayThread():
 
 
 def stopDisplay():
+    global t
     leds.stopDisplay()
-    time.sleep(1)
+    t.join()
     return
 
 

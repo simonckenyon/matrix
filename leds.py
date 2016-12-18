@@ -1,7 +1,6 @@
 import time, sys, os, re
-from neopixel import *  # See https://learn.adafruit.com/neopixels-on-raspberry-pi/software
+from neopixel  import Color, Adafruit_NeoPixel  # See https://learn.adafruit.com/neopixels-on-raspberry-pi/software
 from PIL import Image  # Use apt-get install python-imaging to install this
-
 
 
 def allonecolour(strip, colour):
@@ -127,7 +126,7 @@ def startDisplay(image):
     if match:
         txtfile = match.group('base') + '.txt'
         if os.path.isfile(txtfile):
-            print "Found text file %s" % (txtfile)
+            #print "Found text file %s" % (txtfile)
             f = open(txtfile, 'r')
             txtlines = f.readlines()
             f.close()
@@ -178,26 +177,26 @@ def startDisplay(image):
                         r'^(?P<start>\s*\d+)(-(?P<finish>\d+))?\s+((?P<command>\S+)(\s+(?P<param>\d+(\.\d+)?))?)$',
                         txtlines[tx], re.M | re.I)
                     if match:
-                        print "Found valid command line %d:\n%s" % (tx, txtlines[tx])
+                        #print "Found valid command line %d:\n%s" % (tx, txtlines[tx])
                         st = int(match.group('start'))
                         fi = st
-                        print "Current pixel %05d start %05d finish %05d" % (x, st, fi)
+                        #print "Current pixel %05d start %05d finish %05d" % (x, st, fi)
                         if match.group('finish'):
                             fi = int(match.group('finish'))
                         if x >= st and tx <= fi:
                             if match.group('command').lower() == 'speed':
                                 SPEED = float(match.group('param'))
                                 thissleep = SPEED
-                                print "Position %d : Set speed to %.3f secs per frame" % (x, thissleep)
+                                #print "Position %d : Set speed to %.3f secs per frame" % (x, thissleep)
                             elif match.group('command').lower() == 'flip':
                                 thissleep = float(match.group('param'))
                                 thisincrement = MATRIX_WIDTH
-                                print "Position %d: Flip for %.3f secs" % (x, thissleep)
+                                #print "Position %d: Flip for %.3f secs" % (x, thissleep)
                             elif match.group('command').lower() == 'hold':
                                 thissleep = float(match.group('param'))
-                                print "Position %d: Hold for %.3f secs" % (x, thissleep)
+                                #print "Position %d: Hold for %.3f secs" % (x, thissleep)
                             elif match.group('command').lower() == 'jump':
-                                print "Position %d: Jump to position %s" % (x, match.group('param'))
+                                #print "Position %d: Jump to position %s" % (x, match.group('param'))
                                 x = int(match.group('param'))
                                 thisincrement = 0
                         # Move to the next line of the text file
@@ -205,7 +204,7 @@ def startDisplay(image):
                         if x >= fi:
                             tx = tx + 1
                     else:
-                        print "Found INVALID command line %d:\n%s" % (tx, txtlines[tx])
+                        #print "Found INVALID command line %d:\n%s" % (tx, txtlines[tx])
                         tx = tx + 1
 
                 x = x + thisincrement
@@ -213,7 +212,7 @@ def startDisplay(image):
         allonecolour(strip, colour(0, 0, 0))
 
     except (KeyboardInterrupt, SystemExit):
-        print "Stopped"
+        #print "Stopped"
         allonecolour(strip, colour(0, 0, 0))
 
 

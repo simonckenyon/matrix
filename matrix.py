@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session, flash
 import flask_login
 import os
+import time
 from user import User
 import threading
 import leds
@@ -55,6 +56,7 @@ def displayThread():
 
 def stopDisplay():
     leds.stopDisplay()
+    time.sleep(1)
     return
 
 
@@ -132,6 +134,6 @@ def message():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=9090, debug=True)
     message = 'new-christmas'
     startDisplay()
+    app.run(host='0.0.0.0', port=9090, debug=True)

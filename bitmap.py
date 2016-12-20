@@ -69,17 +69,19 @@ class Bitmap(object):
             dstpixel += row_offset
 
     def getbitmap(self):
-        bitmap = Image.new('RGB', (self.width, self.height))  # e.g. ('RGB', (640, 480))
+        bitmap = Image.new('RGB', (self.width, self.height), "black")  # e.g. ('RGB', (640, 480))
         srcpixel = 0
         print "width=%d height=%d" % ( self.width, self.height)
+        black = (0, 0, 0)
+        white = (255, 255, 255)
         for y in range(self.height):
             for x in range(self.width):
-                # Perform an OR operation on the destination pixel and the source pixel
-                # because glyph bitmaps may overlap if character kerning is applied, e.g.
-                # in the string "AVA", the "A" and "V" glyphs must be rendered with
-                # overlapping bounding boxes.
                 pixel = self.pixels[srcpixel]
-                bitmap.putpixel((x, y), pixel)
+                if pixel:
+                    bitmap.putpixel((x, y), white)
+                else:
+                    bitmap.putpixel((x, y), black)
+
                 srcpixel += 1
         return bitmap
 

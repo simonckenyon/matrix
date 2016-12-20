@@ -9,6 +9,7 @@ from bitmap import Font
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
 APP_STATIC = os.path.join(APP_ROOT, 'static')
+APP_MESSAGE_BITMAP = os.path.join(APP_ROOT, 'message')
 APP_FONT = os.path.join(APP_ROOT, 'fonts')
 
 app = Flask(__name__)
@@ -46,7 +47,7 @@ def displayFileThread():
     global led
 
     print 'displayFileThread: filename=' + filename
-    pathname = os.path.join(APP_STATIC, filename) + '.png'
+    pathname = os.path.join(APP_MESSAGE_BITMAP, filename) + '.png'
     print 'pathname=' + pathname
     try:
         bitmap = Image.open(pathname)

@@ -28,6 +28,7 @@
 # THE SOFTWARE.
 
 import freetype
+from PIL import Image  # Use apt-get install python-imaging to install this
 
 
 class Bitmap(object):
@@ -66,6 +67,19 @@ class Bitmap(object):
                 srcpixel += 1
                 dstpixel += 1
             dstpixel += row_offset
+
+        def getbitmap(self):
+            bitmap = Image.new('RGB', (self.width, self.height))  # e.g. ('RGB', (640, 480))
+            srcpixel = 0
+            for y in range(src.height):
+                for x in range(src.width):
+                    # Perform an OR operation on the destination pixel and the source pixel
+                    # because glyph bitmaps may overlap if character kerning is applied, e.g.
+                    # in the string "AVA", the "A" and "V" glyphs must be rendered with
+                    # overlapping bounding boxes.
+                    pixel = self.pixels[srcpixel]
+                    bitmap.putpixel((x, y), pixel)
+                    srcpixel += 1
 
 
 class Glyph(object):

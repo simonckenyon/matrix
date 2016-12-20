@@ -65,8 +65,8 @@ def displayBitmapThread():
     global led
 
     print 'displayBitmapThread: text=' + text
-    #fontpath = os.path.join(APP_FONT, 'C64_Pro-STYLE.ttf')
-    fontpath = os.path.join(APP_FONT, 'Peepo.ttf')
+    fontpath = os.path.join(APP_FONT, 'C64_Pro-STYLE.ttf')
+    #fontpath = os.path.join(APP_FONT, 'Peepo.ttf')
     width = led.getWidth()
     height = led.getHeight()
     font = Font(fontpath, height)

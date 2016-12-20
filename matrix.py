@@ -71,7 +71,7 @@ def displayBitmapThread():
     height = led.getHeight()
     font = Font(fontpath, height)
     twodeebitmap = font.render_text(text)
-    print(repr(twodeebitmap))
+    #print(repr(twodeebitmap))
     bitmap = twodeebitmap.getbitmap(width, height)
 
     led.startDisplay(bitmap)

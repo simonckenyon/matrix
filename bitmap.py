@@ -71,7 +71,7 @@ class Bitmap(object):
     def getbitmap(self, width, height):
         bitmap = Image.new('RGB', (self.width + width, height), "black")  # allow for blank display at end
         srcpixel = 0
-        print "width=%d height=%d" % ( self.width, self.height)
+        #print "width=%d height=%d" % ( self.width, self.height)
         off_pixel = (0, 0, 0)
         on_pixel = (128, 128, 128)
         for y in range(self.height):

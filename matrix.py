@@ -9,8 +9,8 @@ from bitmap import Font
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
 APP_STATIC = os.path.join(APP_ROOT, 'static')
-APP_MESSAGE_BITMAP = os.path.join(APP_ROOT, 'message')
-APP_FONT = os.path.join(APP_ROOT, 'fonts')
+APP_MESSAGE_BITMAP = os.path.join(APP_STATIC, 'message')
+APP_FONT = os.path.join(APP_STATIC, 'fonts')
 
 app = Flask(__name__)
 app.secret_key = 'a really secret key'

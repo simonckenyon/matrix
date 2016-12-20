@@ -71,8 +71,9 @@ class Bitmap(object):
     def getbitmap(self):
         bitmap = Image.new('RGB', (self.width, self.height))  # e.g. ('RGB', (640, 480))
         srcpixel = 0
-        for y in range(src.height):
-            for x in range(src.width):
+        print "width=" + self.width + " height=" + self.height
+        for y in range(self.height):
+            for x in range(self.width):
                 # Perform an OR operation on the destination pixel and the source pixel
                 # because glyph bitmaps may overlap if character kerning is applied, e.g.
                 # in the string "AVA", the "A" and "V" glyphs must be rendered with
@@ -80,6 +81,7 @@ class Bitmap(object):
                 pixel = self.pixels[srcpixel]
                 bitmap.putpixel((x, y), pixel)
                 srcpixel += 1
+        return bitmap
 
 
 class Glyph(object):

@@ -181,7 +181,7 @@ class Font(object):
         return kerning.x / 64
 
     def text_dimensions(self, text):
-        """Return (width, height, baseline) of `text` rendered in the current font."""
+        """Return (width, height, baseline) of `text` rendered in the current fonts."""
         width = 0
         max_ascent = 0
         max_descent = 0
@@ -238,7 +238,7 @@ class Font(object):
         return outbuffer
 
 if __name__ == '__main__':
-    # Be sure to place 'helvetica.ttf' (or any other ttf / otf font file) in the working directory.
+    # Be sure to place 'helvetica.ttf' (or any other ttf / otf fonts file) in the working directory.
     fnt = Font('helvetica.ttf', 24)
 
     # Single characters

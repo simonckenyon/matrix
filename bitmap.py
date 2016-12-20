@@ -72,15 +72,15 @@ class Bitmap(object):
         bitmap = Image.new('RGB', (self.width, self.height), "black")  # e.g. ('RGB', (640, 480))
         srcpixel = 0
         print "width=%d height=%d" % ( self.width, self.height)
-        black = (0, 0, 0)
-        white = (255, 255, 255)
+        off_pixel = (0, 0, 0)
+        on_pixel = (128, 128, 128)
         for y in range(self.height):
             for x in range(self.width):
                 pixel = self.pixels[srcpixel]
                 if pixel:
-                    bitmap.putpixel((x, y), white)
+                    bitmap.putpixel((x, y), on_pixel)
                 else:
-                    bitmap.putpixel((x, y), black)
+                    bitmap.putpixel((x, y), off_pixel)
 
                 srcpixel += 1
         if y < height:
@@ -88,9 +88,9 @@ class Bitmap(object):
                 for x in range(self.width):
                     pixel = self.pixels[srcpixel]
                     if pixel:
-                        bitmap.putpixel((x, y), white)
+                        bitmap.putpixel((x, y), on_pixel)
                     else:
-                        bitmap.putpixel((x, y), black)
+                        bitmap.putpixel((x, y), off_pixel)
 
                     srcpixel += 1
 

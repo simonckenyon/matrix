@@ -71,7 +71,7 @@ class Bitmap(object):
     def getbitmap(self):
         bitmap = Image.new('RGB', (self.width, self.height))  # e.g. ('RGB', (640, 480))
         srcpixel = 0
-        print "width=" + self.width + " height=" + self.height
+        print "width=%d height=%d" % ( self.width, self.height)
         for y in range(self.height):
             for x in range(self.width):
                 # Perform an OR operation on the destination pixel and the source pixel

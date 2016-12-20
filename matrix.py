@@ -42,29 +42,32 @@ def request_loader(request):
 
 
 def displayFileThread():
-    global message
+    global filename
     global led
 
-    print 'displayFileThread: message=' + message
-    filename = os.path.join(APP_STATIC, message) + '.png'
-    print 'filename=' + filename
+    print 'displayFileThread: filename=' + filename
+    pathname = os.path.join(APP_STATIC, filename) + '.png'
+    print 'pathname=' + pathname
     try:
-        bitmap = Image.open(filename)
+        bitmap = Image.open(pathname)
     except:
-        raise Exception("Image file %s could not be loaded" % filename)
-    instructions = led.setUpTextFile(filename)
+        raise Exception("Image pathname %s could not be loaded" % pathname)
+    instructions = led.setUpTextFile(pathname)
 
     led.startFileDisplay(bitmap, instructions)
     return
 
 
 def displayBitmapThread():
-    global message
+    global text
+    global message_format
     global led
 
-    print 'displayBitmapThread: message=' + message
-    font = os.path.join(APP_FONT, 'C64_Pro-STYLE.ttf')
-    bitmap = font.render_text(message)
+    print 'displayBitmapThread: text=' + text
+    fontpath = os.path.join(APP_FONT, 'C64_Pro-STYLE.ttf')
+    height = led.getHeight()
+    font = Font(fontpath, height)
+    bitmap = font.render_text(text)
 
     led.startDisplay(bitmap)
     return
@@ -81,8 +84,12 @@ def stopMatrix():
 
 @app.route("/")
 def index():
+    global filename
+    global text
+    global message_format
+
     if 'logged_in' in session:
-        return render_template('main.html', message=message)
+        return render_template('main.html', message_format=message_format, filename=filename, text=text)
     else:
         return render_template('welcome.html')
 
@@ -90,13 +97,21 @@ def index():
 @app.route("/stop")
 @flask_login.login_required
 def stop():
+    global filename
+    global text
+    global message_format
+
     stopMatrix()
     flash('Lights stopped')
-    return render_template('main.html', message=message)
+    return render_template('main.html', message_format=message_format, filename=filename, text=text)
 
 
 @app.route('/login', methods=['POST'])
 def login():
+    global filename
+    global text
+    global message_format
+
     if request.method == 'GET':
         flash('Please login')
         return render_template('welcome.html')
@@ -107,7 +122,7 @@ def login():
             user.id = email
             flask_login.login_user(user)
             session['logged_in'] = True
-            return render_template('main.html', message=message)
+            return render_template('main.html', message_format=message_format, filename=filename, text=text)
     except KeyError as e:
         flash('Invalid email')
         return render_template('welcome.html')
@@ -141,32 +156,30 @@ def page_not_found(error):
 @app.route("/message", methods=['POST'])
 @flask_login.login_required
 def message():
-    global message
+    global filename
+    global text
+    global message_format
     global t
 
-    message = request.form['chosen']
     stopMatrix()
-    t = threading.Thread(target=displayFileThread)
+    message_format = request.form['message_format']
+    print "message_format is " + message_format
+    if (message_format == "filename"):
+        print "filename"
+        filename = request.form['filename']
+        flash('filename set to ' + filename)
+        t = threading.Thread(target=displayFileThread)
+    else:
+        print "text"
+        text = request.form['text']
+        flash('text set to ' + text)
+        t = threading.Thread(target=displayBitmapThread)
     t.start()
-    flash('Message set to ' + message)
-    return render_template('main.html', message=message)
-
-@app.route("/textMessage", methods=['POST'])
-@flask_login.login_required
-def message():
-    global message
-    global t
-
-    message = request.form['text']
-
-    stopMatrix()
-    t = threading.Thread(target=displayBitmapThread)
-    t.start()
-
-    flash('Message set to ' + message)
-    return render_template('main.html', message=message)
+    return render_template('main.html', message_format=message_format, filename=filename, text=text)
 
 if __name__ == "__main__":
-    message = 'new-christmas'
+    filename = 'new-christmas'
+    text = ''
+    message_format = 'filename'
     led = LED()
     app.run(host='0.0.0.0', port=9090, debug=True)

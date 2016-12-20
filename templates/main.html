@@ -7,16 +7,34 @@
             </div>
             <div class="panel-body">
                 <div class="form-group">
-                    <label for="chosen" class="col-sm-2 control-label">Message</label>
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default {% if message_format=='filename' %}active{% endif %}">
+                                <input type="radio" name="message_format" value="filename" {% if message_format=='filename' %}checked=""{% endif %}>Bitmap file
+                            </label>
+                            <label class="btn btn-default {% if message_format=='text' %}active{% endif %}">
+                                <input type="radio" name="message_format" value="text" {% if message_format=='text' %}checked=""{% endif %}>Text
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bitmap" class="col-sm-2 control-label">Bitmap message</label>
                     <div class="col-sm-10">
-                        <select name="chosen" class="form-control select2-single">
-                            <option value="christmas">Christmas</option>
-                            <option value="new-christmas">Short Christmas</option>
-                            <option value="emer">Welcome Emer</option>
-                            <option value="tim">Welcome Tim and Thett</option>
-                            <option value="rob">Welcome Rob</option>
-                            <option value="sam">Welcome Sam and Elaine</option>
+                        <select name="filename" class="form-control select2-single">
+                            <option value="christmas" {% if filename=='christmas' %}selected{% endif %}>Christmas</option>
+                            <option value="new-christmas" {% if filename=='new-christmas' %}selected{% endif %}>Short Christmas</option>
+                            <option value="emer" {% if filename=='emer' %}selected{% endif %}>Welcome Emer</option>
+                            <option value="tim" {% if filename=='tim' %}selected{% endif %}>Welcome Tim and Thett</option>
+                            <option value="rob" {% if filename=='rob' %}selected{% endif %}>Welcome Rob</option>
+                            <option value="sam" {% if filename=='sam' %}selected{% endif %}>Welcome Sam and Elaine</option>
                         </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="text" class="col-sm-2 control-label">Text message</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="text" value="{{ text }}"/>
                     </div>
                 </div>
             </div>
@@ -32,7 +50,7 @@
     <script type="application/javascript">
         $(document).ready(function () {
             $.fn.select2.defaults.set("theme", "bootstrap");
-            $(".select2-single").select2().val('{{ message }}').trigger("change");
+            $(".select2-single").select2();
         });
     </script>
 {% endblock %}

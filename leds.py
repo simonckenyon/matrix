@@ -201,3 +201,7 @@ class LED:
         global keep_on_going
 
         keep_on_going = False
+
+
+    def getHeight(self):
+        return self.MATRIX_HEIGHT

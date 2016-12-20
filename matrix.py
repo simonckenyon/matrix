@@ -55,7 +55,7 @@ def displayFileThread():
         raise Exception("Image pathname %s could not be loaded" % pathname)
     instructions = led.setUpTextFile(pathname)
 
-    led.startFileDisplay(bitmap, instructions)
+    led.startDisplay(bitmap, instructions)
     return
 
 

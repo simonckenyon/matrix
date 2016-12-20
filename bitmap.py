@@ -68,7 +68,7 @@ class Bitmap(object):
                 dstpixel += 1
             dstpixel += row_offset
 
-    def getbitmap(self):
+    def getbitmap(self, height):
         bitmap = Image.new('RGB', (self.width, self.height), "black")  # e.g. ('RGB', (640, 480))
         srcpixel = 0
         print "width=%d height=%d" % ( self.width, self.height)
@@ -83,6 +83,17 @@ class Bitmap(object):
                     bitmap.putpixel((x, y), black)
 
                 srcpixel += 1
+        if y < height:
+            for y in range(height, self.height):
+                for x in range(self.width):
+                    pixel = self.pixels[srcpixel]
+                    if pixel:
+                        bitmap.putpixel((x, y), white)
+                    else:
+                        bitmap.putpixel((x, y), black)
+
+                    srcpixel += 1
+
         return bitmap
 
 

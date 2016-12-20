@@ -203,5 +203,8 @@ class LED:
         keep_on_going = False
 
 
+    def getWidth(self):
+        return self.MATRIX_WIDTH
+
     def getHeight(self):
         return self.MATRIX_HEIGHT

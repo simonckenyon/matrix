@@ -68,8 +68,8 @@ class Bitmap(object):
                 dstpixel += 1
             dstpixel += row_offset
 
-    def getbitmap(self, height):
-        bitmap = Image.new('RGB', (self.width, self.height), "black")  # e.g. ('RGB', (640, 480))
+    def getbitmap(self, width, height):
+        bitmap = Image.new('RGB', (self.width + width, height), "black")  # allow for blank display at end
         srcpixel = 0
         print "width=%d height=%d" % ( self.width, self.height)
         off_pixel = (0, 0, 0)
@@ -77,22 +77,18 @@ class Bitmap(object):
         for y in range(self.height):
             for x in range(self.width):
                 pixel = self.pixels[srcpixel]
+                srcpixel += 1
                 if pixel:
                     bitmap.putpixel((x, y), on_pixel)
                 else:
                     bitmap.putpixel((x, y), off_pixel)
+            for x in range(self.width, self.width + width):
+                bitmap.putpixel((x, y), off_pixel)
 
-                srcpixel += 1
-        if y < height:
-            for y in range(height, self.height):
-                for x in range(self.width):
-                    pixel = self.pixels[srcpixel]
-                    if pixel:
-                        bitmap.putpixel((x, y), on_pixel)
-                    else:
-                        bitmap.putpixel((x, y), off_pixel)
-
-                    srcpixel += 1
+        # fill up the lines at the end
+        for y in range(height, self.height):
+            for x in range(self.width + width):
+                bitmap.putpixel((x, y), off_pixel)
 
         return bitmap
 

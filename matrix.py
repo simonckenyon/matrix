@@ -66,8 +66,9 @@ def displayBitmapThread():
 
     print 'displayBitmapThread: text=' + text
     fontpath = os.path.join(APP_FONT, 'C64_Pro-STYLE.ttf')
+    width = led.getWidth()
     height = led.getHeight()
-    font = Font(fontpath, height)
+    font = Font(fontpath, width, height)
     twodeebitmap = font.render_text(text)
     print(repr(twodeebitmap))
     bitmap = twodeebitmap.getbitmap(height)

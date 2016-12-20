@@ -3,10 +3,13 @@ import flask_login
 import os
 from user import User
 import threading
+from PIL import Image  # Use apt-get install python-imaging to install this
 from leds import LED
+from bitmap import Font
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
 APP_STATIC = os.path.join(APP_ROOT, 'static')
+APP_FONT = os.path.join(APP_ROOT, 'font')
 
 app = Flask(__name__)
 app.secret_key = 'a really secret key'
@@ -38,20 +41,32 @@ def request_loader(request):
     return user
 
 
-def startMatrix():
-    global t
-    t = threading.Thread(target=displayThread)
-    t.start()
+def displayFileThread():
+    global message
+    global led
+
+    print 'displayFileThread: message=' + message
+    filename = os.path.join(APP_STATIC, message) + '.png'
+    print 'filename=' + filename
+    try:
+        bitmap = Image.open(filename)
+    except:
+        raise Exception("Image file %s could not be loaded" % filename)
+    instructions = led.setUpTextFile(filename)
+
+    led.startFileDisplay(bitmap, instructions)
     return
 
 
-def displayThread():
+def displayBitmapThread():
     global message
     global led
-    print 'here is the message ' + message
-    s = os.path.join(APP_STATIC, message) + '.png'
-    print 's=' + s
-    led.startDisplay(s)
+
+    print 'displayBitmapThread: message=' + message
+    font = os.path.join(APP_FONT, 'C64_Pro-STYLE.ttf')
+    bitmap = font.render_text(message)
+
+    led.startDisplay(bitmap)
     return
 
 
@@ -70,14 +85,6 @@ def index():
         return render_template('main.html', message=message)
     else:
         return render_template('welcome.html')
-
-
-@app.route("/start")
-@flask_login.login_required
-def start():
-    startMatrix()
-    flash('Lights started')
-    return render_template('main.html', message=message)
 
 
 @app.route("/stop")
@@ -135,12 +142,29 @@ def page_not_found(error):
 @flask_login.login_required
 def message():
     global message
+    global t
+
     message = request.form['chosen']
     stopMatrix()
-    startMatrix()
+    t = threading.Thread(target=displayFileThread)
+    t.start()
     flash('Message set to ' + message)
     return render_template('main.html', message=message)
 
+@app.route("/textMessage", methods=['POST'])
+@flask_login.login_required
+def message():
+    global message
+    global t
+
+    message = request.form['text']
+
+    stopMatrix()
+    t = threading.Thread(target=displayBitmapThread)
+    t.start()
+
+    flash('Message set to ' + message)
+    return render_template('main.html', message=message)
 
 if __name__ == "__main__":
     message = 'new-christmas'

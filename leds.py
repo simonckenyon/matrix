@@ -1,4 +1,4 @@
-import time, sys, os, re
+import time, os, re
 from neopixel  import Color, Adafruit_NeoPixel  # See https://learn.adafruit.com/neopixels-on-raspberry-pi/software
 from PIL import Image  # Use apt-get install python-imaging to install this
 
@@ -57,72 +57,27 @@ class LED:
         self.allonecolour(strip, self.colour(255, 255, 255))
         time.sleep(0.01)
 
-
-    def startDisplay(self, image):
+    def startDisplay(self, bitmap, instructions=None):
         global keep_on_going
 
         keep_on_going = True
-
-
-        # Open the image file
-        try:
-            loadIm = Image.open(image)
-        except:
-            raise Exception("Image file %s could not be loaded" % image)
-
-        # If the image height doesn't match the matrix, resize it
-        if loadIm.size[1] != LED.MATRIX_HEIGHT:
-            origIm = loadIm.resize((loadIm.size[0] / (loadIm.size[1] // LED.MATRIX_HEIGHT), LED.MATRIX_HEIGHT), Image.BICUBIC)
-        else:
-            origIm = loadIm.copy()
-        # If the input is a very small portrait image, then no amount of resizing will save us
-        if origIm.size[0] < LED.MATRIX_WIDTH:
-            raise Exception("Picture is too narrow. Must be at least %s pixels wide" % LED.MATRIX_WIDTH)
-
-        # Check if there's an accompanying .txt file which tells us
-        # how the user wants the image animated
-        # Commands available are:
-        # NNNN speed S.SSS
-        #   Set the scroll speed (in seconds)
-        #   Example: 0000 speed 0.150
-        #   At position zero (first position), set the speed to 150ms
-        # NNNN hold S.SSS
-        #   Hold the frame still (in seconds)
-        #   Example: 0011 hold 2.300
-        #   At position 11, keep the image still for 2.3 seconds
-        # NNNN-PPPP flip S.SSS
-        #   Animate MATRIX_WIDTH frames, like a flipbook
-        #   with a speed of S.SSS seconds between each frame
-        #   Example: 0014-0049 flip 0.100
-        #   From position 14, animate with 100ms between frames
-        #   until you reach or go past position 49
-        #   Note that this will jump positions MATRIX_WIDTH at a time
-        #   Takes a bit of getting used to - experiment
-        # NNNN jump PPPP
-        #   Jump to position PPPP
-        #   Example: 0001 jump 0200
-        #   At position 1, jump to position 200
-        #   Useful for debugging only - the image will loop anyway
-        txtlines = []
-        match = re.search(r'^(?P<base>.*)\.[^\.]+$', image, re.M | re.I)
-        if match:
-            txtfile = match.group('base') + '.txt'
-            if os.path.isfile(txtfile):
-                #print "Found text file %s" % (txtfile)
-                f = open(txtfile, 'r')
-                txtlines = f.readlines()
-                f.close()
-
-        # Add a copy of the start of the image, to the end of the image,
-        # so that it loops smoothly at the end of the image
-        im = Image.new('RGB', (origIm.size[0] + LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT))
-        im.paste(origIm, (0, 0, origIm.size[0], LED.MATRIX_HEIGHT))
-        im.paste(origIm.crop((0, 0, LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT)),
-                 (origIm.size[0], 0, origIm.size[0] + LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT))
+        if instructions is None:
+            instructions = []
 
         # Create NeoPixel object with appropriate configuration.
         strip = Adafruit_NeoPixel(LED.LED_COUNT, LED.LED_PIN, LED.LED_FREQ_HZ, LED.LED_DMA, LED.LED_INVERT, LED.LED_BRIGHTNESS)
         self.initLeds(strip)
+
+        # If the image height doesn't match the matrix, resize it
+        if bitmap.size[1] != LED.MATRIX_HEIGHT:
+            resized_bitmap = bitmap.resize((bitmap.size[0] / (bitmap.size[1] // LED.MATRIX_HEIGHT), LED.MATRIX_HEIGHT), Image.BICUBIC)
+        else:
+            resized_bitmap = bitmap.copy()
+        # If the input is a very small portrait image, then no amount of resizing will save us
+        if resized_bitmap.size[0] < LED.MATRIX_WIDTH:
+            raise Exception("Picture is too narrow. Must be at least %s pixels wide" % LED.MATRIX_WIDTH)
+
+        display_bitmap = self.appendImage(resized_bitmap)
 
         # And here we go.
         try:
@@ -135,7 +90,7 @@ class LED:
                 # Initialise a pointer for the current line in the text file
                 tx = 0
 
-                while (x < im.size[0] - LED.MATRIX_WIDTH) and keep_on_going:
+                while (x < display_bitmap.size[0] - LED.MATRIX_WIDTH) and keep_on_going:
 
                     # Set the sleep period for this frame
                     # This might get changed by a textfile command
@@ -146,7 +101,7 @@ class LED:
                     # the FLIP command can change this
                     thisincrement = 1
 
-                    rg = im.crop((x, 0, x + LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT))
+                    rg = display_bitmap.crop((x, 0, x + LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT))
                     dots = list(rg.getdata())
 
                     for i in range(len(dots)):
@@ -154,10 +109,10 @@ class LED:
                     strip.show()
 
                     # Check for instructions from the text file
-                    if tx < len(txtlines):
+                    if tx < len(instructions):
                         match = re.search(
                             r'^(?P<start>\s*\d+)(-(?P<finish>\d+))?\s+((?P<command>\S+)(\s+(?P<param>\d+(\.\d+)?))?)$',
-                            txtlines[tx], re.M | re.I)
+                            instructions[tx], re.M | re.I)
                         if match:
                             #print "Found valid command line %d:\n%s" % (tx, txtlines[tx])
                             st = int(match.group('start'))
@@ -197,6 +152,50 @@ class LED:
             #print "Stopped"
             self.allonecolour(strip, self.colour(0, 0, 0))
 
+    # Check if there's an accompanying .txt file which tells us
+    # how the user wants the image animated
+    # Commands available are:
+    # NNNN speed S.SSS
+    #   Set the scroll speed (in seconds)
+    #   Example: 0000 speed 0.150
+    #   At position zero (first position), set the speed to 150ms
+    # NNNN hold S.SSS
+    #   Hold the frame still (in seconds)
+    #   Example: 0011 hold 2.300
+    #   At position 11, keep the image still for 2.3 seconds
+    # NNNN-PPPP flip S.SSS
+    #   Animate MATRIX_WIDTH frames, like a flipbook
+    #   with a speed of S.SSS seconds between each frame
+    #   Example: 0014-0049 flip 0.100
+    #   From position 14, animate with 100ms between frames
+    #   until you reach or go past position 49
+    #   Note that this will jump positions MATRIX_WIDTH at a time
+    #   Takes a bit of getting used to - experiment
+    # NNNN jump PPPP
+    #   Jump to position PPPP
+    #   Example: 0001 jump 0200
+    #   At position 1, jump to position 200
+    #   Useful for debugging only - the image will loop anyway
+    def setUpTextFile(self, image):
+        txtlines = []
+        match = re.search(r'^(?P<base>.*)\.[^\.]+$', image, re.M | re.I)
+        if match:
+            txtfile = match.group('base') + '.txt'
+            if os.path.isfile(txtfile):
+                #print "Found text file %s" % (txtfile)
+                f = open(txtfile, 'r')
+                txtlines = f.readlines()
+                f.close()
+        return txtlines
+
+    # Add a copy of the start of the image, to the end of the image,
+    # so that it loops smoothly at the end of the image
+    def appendImage(self, origIm):
+        im = Image.new('RGB', (origIm.size[0] + LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT))
+        im.paste(origIm, (0, 0, origIm.size[0], LED.MATRIX_HEIGHT))
+        im.paste(origIm.crop((0, 0, LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT)),
+                 (origIm.size[0], 0, origIm.size[0] + LED.MATRIX_WIDTH, LED.MATRIX_HEIGHT))
+        return im
 
     def stopDisplay(self):
         global keep_on_going

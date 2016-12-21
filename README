@@ -1,5 +1,10 @@
+This implements a python/flask web server which controls a set of LED matrix lights.
+Like the code that this based on; you are welcome to use/modify as you see fit.
 
-Files to accompany Raspberry Pi WS2811 LED Matrix HOWTO
+My thanks for Andrew for publishing his design.
+
+The hardware and software are based on the design at:
+
 http://aoakley.com/articles/2015-11-18-raspberry-pi-christmas-led-matrix.php
 
 Public domain Andrew Oakley 2015 aoakley.com

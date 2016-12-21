@@ -22,12 +22,9 @@
                     <label for="bitmap" class="col-sm-2 control-label">Bitmap message</label>
                     <div class="col-sm-10">
                         <select name="filename" class="form-control select2-single">
+                            <option value="halloween" {% if filename=='halloween' %}selected{% endif %}>Halloween</option>
                             <option value="christmas" {% if filename=='christmas' %}selected{% endif %}>Christmas</option>
                             <option value="new-christmas" {% if filename=='new-christmas' %}selected{% endif %}>Short Christmas</option>
-                            <option value="emer" {% if filename=='emer' %}selected{% endif %}>Welcome Emer</option>
-                            <option value="tim" {% if filename=='tim' %}selected{% endif %}>Welcome Tim and Thett</option>
-                            <option value="rob" {% if filename=='rob' %}selected{% endif %}>Welcome Rob</option>
-                            <option value="sam" {% if filename=='sam' %}selected{% endif %}>Welcome Sam and Elaine</option>
                         </select>
                     </div>
                 </div>

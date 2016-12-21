@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = 'a really secret key'
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-users = {'simon@koala.ie': {'pw': 'give me a break'}}
+users = {'admin': {'pw': 'your wish is my command'}}
 t = None
 
 
